@@ -1,57 +1,82 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+title: 快速开始
 ---
 
 # 快速开始
 
-## 环境要求
+## 依赖
 
-- JDK 21 或更高；Gradle wrapper 已入库（9.4.1）。
-- Node 与 npm 由 Kotlin Gradle 插件下载并驱动——没有需要手动执行的 `npm install`，`kotlin.js.yarn=false`
-  保证包管理器是 npm。
-- 第一次跑浏览器测试时会下载 Chromium（Playwright）。
-
-## 构建、测试、发布
-
-```bash
-./gradlew build                    # 编译、Detekt、浏览器测试
-./gradlew :ktjs-wrapper-template-core:jsBrowserTest
-./gradlew :demo:e2eTest            # 用 Playwright 打打包后的 demo 页面
-./gradlew :docs:docusaurusBuild    # 文档站
-./gradlew pagesSite                # 根目录是文档，demo 在 /demo/，Dokka 在 /api/
+```kotlin
+kotlin {
+    js {
+        binaries.executable()
+        browser()
+    }
+    sourceSets {
+        jsMain.dependencies {
+            implementation("io.github.shijianjs:ktjs-photoswipe:5.4.4-kt.1")
+            // `kotlin-browser` 的 `web.*` 类型出现在公开 API 里，所以消费方要能编译到它们。
+            implementation("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.1")
+        }
+    }
+}
 ```
 
-`build` 不含 demo 的端到端套件，也不组装 Pages 站点：两者都要浏览器，在 CI 里是单独的步骤。
+要求 Kotlin 2.4.21 或更新版本；wrapper 输出 ESM，`es2015` 目标起可用。
 
-## 开发
+## 注册插件
 
-```bash
-./gradlew :docs:docusaurusStart    # 文档站的开发服务器
-./gradlew :demo:jsBrowserRun       # demo 页面的开发服务器
+没有插件注册表：PhotoSwipe 5 只有两个模块，而灯箱需要把**核心类**放进 `pswpModule` 选项才能打开任何东西（否则上游 `preload()` 抛 `pswpModule is not valid`）。wrapper 为此提供了 loader：
+
+```kotlin
+import io.github.shijianjs.ktjs.photoswipe.createPhotoSwipeLightbox
+import io.github.shijianjs.ktjs.photoswipe.photoSwipeModuleLoader
+
+val lightbox = createPhotoSwipeLightbox(
+    photoSwipeOptions {
+        gallery = ElementProvider("#gallery")
+        childSelector = "a"
+        pswpModule = photoSwipeModuleLoader()
+    },
+)
+lightbox.init()
 ```
 
-Docusaurus 监听站点目录，改 Markdown 即时刷新；改 Kotlin 要先 `./gradlew :docs:docusaurusSite`，因为
-站点 import 的是编译产物。
+`photoSwipeModuleLoader()` 返回一个解析已导入核心模块的函数，这也是上游为 ES 模块给出的写法。
 
-## 目录结构
+## 第一个调用
 
-| 路径 | 内容 |
-| --- | --- |
-| `package.json` | npm 版本的唯一来源（Dependabot 维护） |
-| `wrapper-revisions.properties` | 每个模块的 `-kt.N` 修订号 |
-| `ktjs-wrapper-template-core/src/jsMain/kotlin` | wrapper 声明 |
-| `ktjs-wrapper-template-core/src/jsTest/kotlin` | 对应的浏览器测试 |
-| `demo/src/jsMain` | demo 页面与它的 Kotlin 入口 |
-| `docs/src/jsMain/kotlin` | 站点配置与侧边栏 |
-| `docs/src/jsMain/resources` | Markdown 页面、MDX 首页、样式、译文 |
+```kotlin
+import io.github.shijianjs.ktjs.photoswipe.createPhotoSwipeLightbox
+import io.github.shijianjs.ktjs.photoswipe.core.DataSource
+import io.github.shijianjs.ktjs.photoswipe.core.ElementProvider
+import io.github.shijianjs.ktjs.photoswipe.core.photoSwipeOptions
+import io.github.shijianjs.ktjs.photoswipe.photoSwipeModuleLoader
 
-## 锁文件
-
-整个 workspace 的 npm 依赖只解析一次，钉在 `kotlin-js-store/package-lock.json`。新增或升级 npm 依赖、
-或者改了模块版本之后要重新生成：
-
-```bash
-./gradlew kotlinUpgradePackageLock
+fun bindGallery(gallery: web.html.HTMLElement) {
+    val lightbox = createPhotoSwipeLightbox(
+        photoSwipeOptions {
+            this.gallery = ElementProvider(gallery)
+            childSelector = "a"
+            // 灯箱通过 `dataSource` 把锚点变成幻灯片。
+            dataSource = DataSource(gallery, null)
+            pswpModule = photoSwipeModuleLoader()
+            bgOpacity = 0.9
+        },
+    )
+    lightbox.on("change") { /* 读取 lightbox.pswp?.currIndex */ }
+    lightbox.init()
+}
 ```
 
-CI 会校验提交的锁文件，忘了重新生成会直接构建失败，而不是悄悄漂移。
+每个缩略图是一个带 `data-pswp-width` 与 `data-pswp-height` 的 `<a href="...">` 锚点 —— PhotoSwipe 从这两个属性读取大图尺寸。
+
+## 构建与测试
+
+```bash
+./gradlew build                     # 编译、Detekt、浏览器测试
+./gradlew :ktjs-photoswipe:jsBrowserTest     # 只跑 wrapper 的浏览器测试
+./gradlew :docs:docusaurusStart     # 文档开发服务器
+./gradlew pagesSite                 # 文档在 /，演示在 /demo/，Dokka 在 /api/
+```

@@ -13,6 +13,15 @@ val brandAssets = tasks.register<Copy>("brandAssets") {
     into(layout.buildDirectory.dir("generated/brand"))
 }
 
+// PhotoSwipe ships its stylesheet inside the npm package; copy it out of the npm workspace so the
+// demo (and the Playwright suite) render without reaching for a CDN.
+val photoSwipeStyles = tasks.register<Copy>("photoSwipeStyles") {
+    from(rootProject.layout.projectDirectory.dir("build/js/node_modules/photoswipe/dist")) {
+        include("photoswipe.css")
+    }
+    into(layout.buildDirectory.dir("generated/photoswipe"))
+}
+
 kotlin {
     js {
         useEsModules()
@@ -29,11 +38,12 @@ kotlin {
     sourceSets {
         jsMain {
             resources.srcDir(brandAssets)
+            resources.srcDir(photoSwipeStyles)
         }
         jsMain.dependencies {
             implementation("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.1")
             // The published modules the demo demonstrates, one line each.
-            implementation(project(":ktjs-wrapper-template-core"))
+            implementation(project(":ktjs-photoswipe"))
         }
 
         jvmTest.dependencies {
@@ -50,7 +60,7 @@ kotlin {
 // `srcDir(task)` contributes the directory but not the task dependency; resource processing is what
 // reads that directory, so the edge belongs there.
 tasks.named("jsProcessResources") {
-    dependsOn(brandAssets)
+    dependsOn(brandAssets, photoSwipeStyles)
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -72,7 +82,7 @@ tasks.register<Test>("e2eTest") {
     dependsOn("jsBrowserDistribution")
     // The Chromium is installed for the Kotlin/JS browser tests of the wrapper module, and this suite
     // reuses it. A derived project points this at its own first published module.
-    dependsOn(":ktjs-wrapper-template-core:kotlinInstallPlaywrightBrowsers")
+    dependsOn(":ktjs-photoswipe:kotlinInstallPlaywrightBrowsers")
 
     testClassesDirs = jvmE2eCompilation.output.classesDirs
     classpath = files(jvmE2eCompilation.output.allOutputs, jvmE2eCompilation.runtimeDependencyFiles)

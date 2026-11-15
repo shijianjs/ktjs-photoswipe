@@ -1,36 +1,40 @@
 :root {
     color-scheme: light dark;
-    --page-fg: #1f2933;
-    --page-bg: #ffffff;
-    --page-muted: #52606d;
+    --fg: #1f2430;
+    --muted: #5a6272;
+    --accent: #2f9e44;
+    --accent-soft: #e6f4ea;
+    --surface: #ffffff;
+    --border: #d8dde6;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --page-fg: #e4e7eb;
-        --page-bg: #111827;
-        --page-muted: #9aa5b1;
+        --fg: #eef1f6;
+        --muted: #a6adbb;
+        --accent: #57cc76;
+        --accent-soft: #1d2b22;
+        --surface: #16181d;
+        --border: #2c313b;
     }
 }
 
-*,
-*::before,
-*::after {
+* {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    color: var(--page-fg);
-    background: var(--page-bg);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    line-height: 1.6;
+    background: var(--surface);
+    color: var(--fg);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 .page {
-    max-width: 72rem;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 2.5rem 1.5rem 4rem;
+    display: block;
 }
 
 .header {
@@ -40,16 +44,126 @@ body {
 }
 
 .logo {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
 
-.hint,
-.status {
-    color: var(--page-muted);
+.header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    flex: 1;
 }
 
-/* The demo page is a plain page, so the element it wraps can be spaced with a tag selector here. */
-.page vaadin-button {
-    margin-right: 0.5rem;
+.lang {
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    cursor: pointer;
 }
+
+.hint {
+    margin: 1.25rem 0 0.5rem;
+    color: var(--muted);
+}
+
+.version {
+    margin: 0 0 1.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.content h2 {
+    margin: 2rem 0 0.75rem;
+    font-size: 1.15rem;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+button {
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--accent-soft);
+    color: var(--fg);
+    font: inherit;
+    cursor: pointer;
+}
+
+button:hover {
+    border-color: var(--accent);
+}
+
+.label {
+    color: var(--muted);
+}
+
+.select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--fg);
+    font: inherit;
+}
+
+.stage {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    min-height: 170px;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.box {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/* The demo gallery: six tiles that open the lightbox. PhotoSwipe's own CSS styles the overlay. */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 960px;
+    margin: 8px 0 48px;
+}
+
+.gallery a { display: block; text-decoration: none; }
+
+.tile {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.tile-label { font-size: 0.8rem; color: #2d3748; }
