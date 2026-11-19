@@ -547,6 +547,19 @@ klibs.io 从 Maven Central 与 GitHub 自动抓取，无需提交元数据文件
 ## 演示页面与 GitHub Pages
 
 - `demo` 只消费公共 API，不发布、也不进入 Dokka。根 `build.gradle.kts` 的发布与 Dokka 配置按
+
+- **页面外壳来自 `ktjs-demo-kit`（`ktjs-dom-kit` 仓库的模块）**，demo 自己只留内容：`index.html` 里只声明一个
+  `<ktjs-demo-layout id="demo">`，`demo/Main.kt` 定义标签并挂上 `LayoutConfig`；菜单在 `demo/SiteMenu.kt`
+  （`Group` + `Entry`），外壳文案在 `demo/SiteTexts.kt`，页面在 `demo/page/<分组>/`，每页一个
+  `Translations` + `Binder`：切语言只重写文本，不重建节点。
+- **demo 的 JS 编译目标必须是 ES2015**（`compilerOptions { target = "es2015" }`）：外壳是自定义元素，ES5 下
+  Kotlin 生成 `function X() { HTMLElement.call(this) }`，DOM 构造函数只能 `new`，标签永远不升级、页面白屏。
+- **`index.html` 要同时挂 `photoswipe.css` 与 `lumo.css`**：灯箱的界面是 PhotoSwipe 自己画的，只给 Lumo
+  会让它退化成没有背景与箭头的白板；`photoswipe.css` 由 `photoSwipeStyles` 任务从 npm 工作区拷进 resources。
+- **`photoSwipeOptions { }` 的接收者里有 `gallery: ElementProvider?`**，内层接收者优先于页面的同名字段：
+  页面里那个画廊元素必须叫别的名字（现在是 `galleryElement`），否则 `ElementProvider(gallery)` 找不到重载。
+- **灯箱要等画廊挂载后再 `init()`**：`init()` 要绑画廊子元素的点击、并把灯箱根节点挂到页面，页面字段的
+  初始化却早于路由把节点接进文档；`requestAnimationFrame` 等到 `isConnected` 再建，比 `setTimeout` 可靠。
   `ktjs-photoswipe-` 前缀过滤子模块，新增非发布模块时沿用该约定。
 - 根 `package.json` 的 `browserslist` 是构建必需项，不是装饰：Babel 从生成的站点目录往上找到它才有编译
   目标。没有它 `@babel/preset-env` 按 ES5 处理，`async/await` 被翻成 regenerator 状态机，
