@@ -1,13 +1,15 @@
 package demo.page.gallery
 
+import io.github.shijianjs.ktjs.demo.page.DemoPage
+import io.github.shijianjs.ktjs.dom.webcomponent.defineIfMissing
+import web.components.CustomElementReference
+import web.dom.TagName
 import io.github.shijianjs.ktjs.demo.i18n.Binder
 import io.github.shijianjs.ktjs.demo.i18n.Lang
 import io.github.shijianjs.ktjs.demo.i18n.Langs
 import io.github.shijianjs.ktjs.demo.i18n.Translations
 import io.github.shijianjs.ktjs.demo.i18n.texts
-import io.github.shijianjs.ktjs.demo.nav.Page
 import io.github.shijianjs.ktjs.demo.page.grid
-import io.github.shijianjs.ktjs.demo.page.newPage
 import io.github.shijianjs.ktjs.demo.page.row
 import io.github.shijianjs.ktjs.demo.page.sectionBlock
 import io.github.shijianjs.ktjs.demo.style.Palette
@@ -108,8 +110,7 @@ private val tiles = listOf(
  * The lightbox is created once — its options object is the thing being demonstrated, and rebuilding
  * it on every language switch would drop the open slide.
  */
-internal class GalleryPage : Page {
-    private val page = newPage()
+internal class GalleryPage : DemoPage() {
 
     private val texts = Binder(galleryTexts)
 
@@ -172,7 +173,6 @@ internal class GalleryPage : Page {
         clickEvent.addHandler { lightbox?.loadAndOpen(0.0, null, null) }
     }
 
-    override val node get() = page
 
     init {
         texts.bind(openButton, { it.open })
@@ -182,7 +182,7 @@ internal class GalleryPage : Page {
         texts.bind(section.hint, { it.sectionHint })
         section.body.append(row(openButton), status, galleryElement)
 
-        page.body.append(section.root)
+        body.append(section.root)
         galleryElement.append(*tileLinks.toTypedArray())
 
         startOnceMounted()
@@ -240,8 +240,8 @@ internal class GalleryPage : Page {
 
     override fun applyTranslation(lang: Lang) {
         current = galleryTexts[lang]
-        page.setTitle(current.title)
-        page.setSummary(current.summary)
+        setTitle(current.title)
+        setSummary(current.summary)
         texts.apply(lang)
         tiles.forEachIndexed { index, tile ->
             tileLabels[index].textContent = current.tileLabels.getOrElse(tile.index) { "" }
@@ -253,6 +253,14 @@ internal class GalleryPage : Page {
             options.arrowNextTitle = current.next
         }
         renderStatus()
+    }
+
+    companion object : CustomElementReference<GalleryPage>(GalleryPage::class.js) {
+        val NAME: TagName<GalleryPage> = TagName("photoswipe-gallery-page")
+
+        fun define() {
+            defineIfMissing(NAME, this)
+        }
     }
 }
 
@@ -267,3 +275,9 @@ private fun svgDataUri(tile: Tile): String {
 
 /** `encodeURIComponent` for the data URI; `js(...)` keeps the escaping rules identical to the browser. */
 private val encodeURIComponent: (String) -> String = js("encodeURIComponent")
+
+/** Creates a defined `<photoswipe-gallery-page>`. */
+internal fun newGalleryPage(): GalleryPage {
+    GalleryPage.define()
+    return GalleryPage.NAME()
+}
