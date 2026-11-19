@@ -19,6 +19,22 @@ The wrapped surface is the whole `photoswipe` 5 package: the `PhotoSwipeLightbox
 
 The package has two sub-path entries, both with a `default` export only; they land in one Kotlin package (`io.github.shijianjs.ktjs.photoswipe`) with a `core` sub-package.
 
+```mermaid
+flowchart TB
+  L["photoswipe/lightbox<br/>PhotoSwipeLightbox"] -->|"binds a click on a thumbnail"| O["open()"]
+  O --> G["photoswipe<br/>PhotoSwipe core gallery"]
+  L --> OPT["PhotoSwipeOptions<br/>(typed builder)"]
+  OPT --> G
+  L --> EV["shared event / filter layer"]
+  G --> EV
+  EV --> S["SlideData / DataSource / Point / Bounds<br/>ElementProvider / ActionType"]
+  S --> K["io.github.shijianjs.ktjs.photoswipe<br/>(+ core sub-package)"]
+  G --> K
+```
+
+`PhotoSwipeLightbox` is the part a page usually keeps: it owns the thumbnails and reads their sizes,
+then opens the core gallery on click — the demo binds six tiles that way.
+
 ## License
 
 The wrapper itself is MIT. The upstream `photoswipe` license differs from it — read the

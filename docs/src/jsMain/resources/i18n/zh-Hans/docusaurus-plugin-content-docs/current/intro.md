@@ -18,6 +18,21 @@ title: 简介
 
 包有两个子路径入口，都只有 `default` 导出；它们落在同一个 Kotlin 包（`io.github.shijianjs.ktjs.photoswipe`）及其 `core` 子包。
 
+```mermaid
+flowchart TB
+  L["photoswipe/lightbox<br/>PhotoSwipeLightbox"] -->|"绑定缩略图点击"| O["open()"]
+  O --> G["photoswipe<br/>PhotoSwipe 核心画廊"]
+  L --> OPT["PhotoSwipeOptions<br/>（类型化构建）"]
+  OPT --> G
+  L --> EV["共享的事件 / 过滤层"]
+  G --> EV
+  EV --> S["SlideData / DataSource / Point / Bounds<br/>ElementProvider / ActionType"]
+  S --> K["io.github.shijianjs.ktjs.photoswipe<br/>（含 core 子包）"]
+  G --> K
+```
+
+页面通常只持有 `PhotoSwipeLightbox`：它接管缩略图、读取尺寸，点击时再打开核心画廊 —— 演示页的那六个方块就是这么挂的。
+
 ## 许可证
 
 wrapper 自身是 MIT。上游 `photoswipe` 的许可证与 wrapper 不同，商用前请读

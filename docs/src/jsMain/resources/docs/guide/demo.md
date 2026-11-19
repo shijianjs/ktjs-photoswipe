@@ -12,6 +12,15 @@ The demo page mounts six tiles as a real PhotoSwipe gallery: each tile is an `<a
 that index. The “open first slide” button calls `loadAndOpen(0, …)` directly, the status line follows
 the `change` event, and the language switch also rewrites the lightbox's own button titles.
 
+```mermaid
+flowchart LR
+  T["6 tiles (&lt;a&gt; + data:image/svg+xml slide)"] -->|"click a tile"| LB["PhotoSwipeLightbox"]
+  BTN["Open first slide"] -->|"loadAndOpen(0, …)"| LB
+  LB --> GL["lightbox: slide at that index"]
+  GL -->|"change event"| ST["status line on the page"]
+  LANGS["language switch"] --> GL
+```
+
 
 The language button in the page header switches between English and Simplified Chinese: every
 visible string changes, not just the title.
