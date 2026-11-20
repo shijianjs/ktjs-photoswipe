@@ -34,21 +34,6 @@ import web.events.addHandler
 import web.html.HTMLElement
 import web.html.HtmlTagName
 
-/** Every string this page shows, in one language. */
-private class GalleryTexts(
-    val title: String,
-    val summary: String,
-    val sectionHeading: String,
-    val sectionHint: String,
-    val open: String,
-    val status: String,
-    val close: String,
-    val zoom: String,
-    val prev: String,
-    val next: String,
-    val tileLabels: List<String>,
-)
-
 private val galleryEnglish: GalleryTexts = GalleryTexts(
     title = "Gallery",
     summary = "Six generated slides in a real PhotoSwipe lightbox: the same options object a " +
@@ -91,7 +76,6 @@ private val galleryTexts: Translations<GalleryTexts> = texts(
  * The label is an index rather than a word, so a language switch relabels the tiles instead of
  * rebuilding them.
  */
-private data class Tile(val index: Int, val colour: String, val width: Int, val height: Int)
 
 private val tiles = listOf(
     Tile(0, "#9ae6b4", 1200, 800),
@@ -170,7 +154,6 @@ internal class GalleryPage : DemoPage() {
         setAttribute("data-action", "open")
         clickEvent.addHandler { lightbox?.loadAndOpen(0.0, null, null) }
     }
-
 
     init {
         texts.bind(openButton, { it.open })
