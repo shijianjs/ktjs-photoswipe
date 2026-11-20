@@ -1,20 +1,18 @@
 package demo.page.gallery
 
 import io.github.shijianjs.ktjs.demo.page.DemoPage
-import io.github.shijianjs.ktjs.dom.webcomponent.defineIfMissing
-import web.components.CustomElementReference
-import web.dom.TagName
 import io.github.shijianjs.ktjs.demo.i18n.Binder
 import io.github.shijianjs.ktjs.demo.i18n.Lang
 import io.github.shijianjs.ktjs.demo.i18n.Langs
 import io.github.shijianjs.ktjs.demo.i18n.Translations
 import io.github.shijianjs.ktjs.demo.i18n.texts
-import io.github.shijianjs.ktjs.demo.page.grid
-import io.github.shijianjs.ktjs.demo.page.row
-import io.github.shijianjs.ktjs.demo.page.sectionBlock
+import io.github.shijianjs.ktjs.demo.page.Blocks.row
+import io.github.shijianjs.ktjs.demo.page.Grid
+import io.github.shijianjs.ktjs.demo.page.SectionBlock
 import io.github.shijianjs.ktjs.demo.style.Palette
 import io.github.shijianjs.ktjs.dom.element.inlineStyle
 import io.github.shijianjs.ktjs.dom.element.invoke
+import io.github.shijianjs.ktjs.dom.webcomponent.CustomElementReferenceAdapter
 import io.github.shijianjs.ktjs.photoswipe.createPhotoSwipeLightbox
 import io.github.shijianjs.ktjs.photoswipe.core.DataSource
 import io.github.shijianjs.ktjs.photoswipe.core.ElementProvider
@@ -157,7 +155,7 @@ internal class GalleryPage : DemoPage() {
      * Named `galleryElement`, not `gallery`: the options receiver declares `gallery` as an
      * `ElementProvider?`, and an inner receiver wins over this page's own field inside that lambda.
      */
-    private val galleryElement: HTMLElement = grid()
+    private val galleryElement: HTMLElement = Grid.NAME { show(260) }
 
     /** The status line, marked for the end-to-end suite: it mirrors the open slide index. */
     private val status: HTMLElement = HtmlTagName.p {
@@ -177,7 +175,7 @@ internal class GalleryPage : DemoPage() {
     init {
         texts.bind(openButton, { it.open })
 
-        val section = sectionBlock()
+        val section = SectionBlock.NAME { show() }
         texts.bind(section.heading, { it.sectionHeading })
         texts.bind(section.hint, { it.sectionHint })
         section.body.append(row(openButton), status, galleryElement)
@@ -255,13 +253,7 @@ internal class GalleryPage : DemoPage() {
         renderStatus()
     }
 
-    companion object : CustomElementReference<GalleryPage>(GalleryPage::class.js) {
-        val NAME: TagName<GalleryPage> = TagName("photoswipe-gallery-page")
-
-        fun define() {
-            defineIfMissing(NAME, this)
-        }
-    }
+    companion object : CustomElementReferenceAdapter<GalleryPage>(GalleryPage::class.js, "photoswipe-gallery-page")
 }
 
 /** An inline SVG so each slide has a real image to load, without any network request. */
@@ -275,9 +267,3 @@ private fun svgDataUri(tile: Tile): String {
 
 /** `encodeURIComponent` for the data URI; `js(...)` keeps the escaping rules identical to the browser. */
 private val encodeURIComponent: (String) -> String = js("encodeURIComponent")
-
-/** Creates a defined `<photoswipe-gallery-page>`. */
-internal fun newGalleryPage(): GalleryPage {
-    GalleryPage.define()
-    return GalleryPage.NAME()
-}

@@ -1,10 +1,11 @@
 package demo
 
-import demo.page.gallery.newGalleryPage
-import demo.page.overview.newOverviewPage
+import demo.page.gallery.GalleryPage
+import demo.page.overview.OverviewPage
 import io.github.shijianjs.ktjs.demo.nav.DemoMenu
 import io.github.shijianjs.ktjs.demo.nav.Entry
 import io.github.shijianjs.ktjs.demo.nav.Group
+import io.github.shijianjs.ktjs.dom.element.invoke
 
 /** The PhotoSwipe version this demo is built against; the navbar shows it under the site name. */
 const val SITE_VERSION: String = "5.4.4"
@@ -28,7 +29,7 @@ internal val EXAMPLES: Group = Group("examples", "lucide:play")
  */
 fun siteMenu(): DemoMenu = DemoMenu(
     listOf(
-        Entry("overview", START, "lucide:sparkles") { newOverviewPage() },
-        Entry("gallery", EXAMPLES, "lucide:images") { newGalleryPage() },
+        Entry("overview", START, "lucide:sparkles") { OverviewPage.NAME() },
+        Entry("gallery", EXAMPLES, "lucide:images") { GalleryPage.NAME() },
     ),
 )
