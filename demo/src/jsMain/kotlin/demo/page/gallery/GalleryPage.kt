@@ -178,7 +178,7 @@ internal class GalleryPage : DemoPage() {
         texts.bind(openButton, { it.open })
 
         val section = sectionBlock()
-        texts.bind(section.title, { it.sectionHeading })
+        texts.bind(section.heading, { it.sectionHeading })
         texts.bind(section.hint, { it.sectionHint })
         section.body.append(row(openButton), status, galleryElement)
 
