@@ -34,57 +34,12 @@ import web.events.addHandler
 import web.html.HTMLElement
 import web.html.HtmlTagName
 
-private val galleryEnglish: GalleryTexts = GalleryTexts(
-    title = "Gallery",
-    summary = "Six generated slides in a real PhotoSwipe lightbox: the same options object a " +
-        "consumer hands over, opened from a tile or from the first slide.",
-    sectionHeading = "Lightbox over a gallery",
-    sectionHint = "Click any tile to open it; the lightbox is created lazily, so the first click " +
-        "also pays for the module load.",
-    open = "Open first slide",
-    status = "Current slide",
-    close = "Close",
-    zoom = "Zoom",
-    prev = "Previous",
-    next = "Next",
-    tileLabels = listOf("Mint", "Sky", "Amber", "Rose", "Violet", "Slate"),
-)
-
-private val galleryChinese: GalleryTexts = GalleryTexts(
-    title = "画廊",
-    summary = "六张生成的幻灯片装在一个真实 PhotoSwipe 灯箱里：用的就是使用者交出去的那份选项对象，" +
-        "可以从方块点开，也可以从第一张打开。",
-    sectionHeading = "画廊上的灯箱",
-    sectionHint = "点任意方块打开；灯箱是懒建的，所以第一次点击还要付模块加载的代价。",
-    open = "从第一张打开",
-    status = "当前幻灯片",
-    close = "关闭",
-    zoom = "缩放",
-    prev = "上一张",
-    next = "下一张",
-    tileLabels = listOf("薄荷", "天蓝", "琥珀", "玫瑰", "紫罗兰", "石板"),
-)
-
-private val galleryTexts: Translations<GalleryTexts> = texts(
-    Langs.EN to galleryEnglish,
-    Langs.ZH_HANS to galleryChinese,
-)
-
 /**
  * A tile: colour and size of the generated slide, plus its index into [GalleryTexts.tileLabels].
  *
  * The label is an index rather than a word, so a language switch relabels the tiles instead of
  * rebuilding them.
  */
-
-private val tiles = listOf(
-    Tile(0, "#9ae6b4", 1200, 800),
-    Tile(1, "#90cdf4", 800, 1200),
-    Tile(2, "#fbd38d", 1200, 900),
-    Tile(3, "#fbb6ce", 1000, 1000),
-    Tile(4, "#d6bcfa", 1400, 800),
-    Tile(5, "#cbd5e0", 900, 1200),
-)
 
 /**
  * The gallery page: six tiles, a status line, and the lightbox that reads both.
@@ -236,17 +191,58 @@ internal class GalleryPage : DemoPage() {
         renderStatus()
     }
 
-    companion object : CustomElementReferenceAdapter<GalleryPage>(GalleryPage::class.js, "photoswipe-gallery-page")
-}
+    companion object : CustomElementReferenceAdapter<GalleryPage>(GalleryPage::class.js, "photoswipe-gallery-page") {
 
-/** An inline SVG so each slide has a real image to load, without any network request. */
-private fun svgDataUri(tile: Tile): String {
-    val svg = "<svg xmlns='http://www.w3.org/2000/svg' width='${tile.width}' height='${tile.height}'>" +
-        "<rect width='100%' height='100%' fill='${tile.colour}'/>" +
-        "<text x='50%' y='50%' font-family='sans-serif' font-size='96' fill='#2d3748' " +
-        "text-anchor='middle' dominant-baseline='middle'>${tile.index + 1}</text></svg>"
-    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg)
+        private val galleryEnglish: GalleryTexts = GalleryTexts(
+            title = "Gallery",
+            summary = "Six generated slides in a real PhotoSwipe lightbox: the same options object a " +
+                "consumer hands over, opened from a tile or from the first slide.",
+            sectionHeading = "Lightbox over a gallery",
+            sectionHint = "Click any tile to open it; the lightbox is created lazily, so the first click " +
+                "also pays for the module load.",
+            open = "Open first slide",
+            status = "Current slide",
+            close = "Close",
+            zoom = "Zoom",
+            prev = "Previous",
+            next = "Next",
+            tileLabels = listOf("Mint", "Sky", "Amber", "Rose", "Violet", "Slate"),
+        )
+        private val galleryChinese: GalleryTexts = GalleryTexts(
+            title = "画廊",
+            summary = "六张生成的幻灯片装在一个真实 PhotoSwipe 灯箱里：用的就是使用者交出去的那份选项对象，" +
+                "可以从方块点开，也可以从第一张打开。",
+            sectionHeading = "画廊上的灯箱",
+            sectionHint = "点任意方块打开；灯箱是懒建的，所以第一次点击还要付模块加载的代价。",
+            open = "从第一张打开",
+            status = "当前幻灯片",
+            close = "关闭",
+            zoom = "缩放",
+            prev = "上一张",
+            next = "下一张",
+            tileLabels = listOf("薄荷", "天蓝", "琥珀", "玫瑰", "紫罗兰", "石板"),
+        )
+        private val galleryTexts: Translations<GalleryTexts> = texts(
+            Langs.EN to galleryEnglish,
+            Langs.ZH_HANS to galleryChinese,
+        )
+        private val tiles = listOf(
+            Tile(0, "#9ae6b4", 1200, 800),
+            Tile(1, "#90cdf4", 800, 1200),
+            Tile(2, "#fbd38d", 1200, 900),
+            Tile(3, "#fbb6ce", 1000, 1000),
+            Tile(4, "#d6bcfa", 1400, 800),
+            Tile(5, "#cbd5e0", 900, 1200),
+        )
+        /** An inline SVG so each slide has a real image to load, without any network request. */
+        private fun svgDataUri(tile: Tile): String {
+            val svg = "<svg xmlns='http://www.w3.org/2000/svg' width='${tile.width}' height='${tile.height}'>" +
+                "<rect width='100%' height='100%' fill='${tile.colour}'/>" +
+                "<text x='50%' y='50%' font-family='sans-serif' font-size='96' fill='#2d3748' " +
+                "text-anchor='middle' dominant-baseline='middle'>${tile.index + 1}</text></svg>"
+            return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg)
+        }
+        /** `encodeURIComponent` for the data URI; `js(...)` keeps the escaping rules identical to the browser. */
+        private val encodeURIComponent: (String) -> String = js("encodeURIComponent")
+    }
 }
-
-/** `encodeURIComponent` for the data URI; `js(...)` keeps the escaping rules identical to the browser. */
-private val encodeURIComponent: (String) -> String = js("encodeURIComponent")
