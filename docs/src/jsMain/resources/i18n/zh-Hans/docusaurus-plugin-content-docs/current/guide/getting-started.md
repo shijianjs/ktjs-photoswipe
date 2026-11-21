@@ -45,6 +45,14 @@ lightbox.init()
 
 `photoSwipeModuleLoader()` 返回一个解析已导入核心模块的函数，这也是上游为 ES 模块给出的写法。
 
+```mermaid
+flowchart LR
+    A["缩略图 a 标签带 data-pswp-width / data-pswp-height"] --> DS["ElementProvider('#gallery') + DataSource(gallery, null)"]
+    DS --> OPT["photoSwipeOptions { … pswpModule = photoSwipeModuleLoader() }"]
+    OPT --> LB["createPhotoSwipeLightbox → init()"]
+    LB --> ON["on('change')：读 lightbox.pswp?.currIndex"]
+```
+
 ## 第一个调用
 
 ```kotlin

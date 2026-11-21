@@ -13,6 +13,14 @@ title: API 概览
 | `…photoswipe.core` | `PhotoSwipeLightbox`、`PhotoSwipeCore`、`PhotoSwipeBase`、`PhotoSwipeOptions`、`photoSwipeOptions` |
 | `…photoswipe.core` | `SlideData`、`slideData`、`DataSource`、`ElementProvider`、`ActionType`、`ActionTypes`、`ActionFn`、`Point`、`Padding`、`Bounds`、`point`、`padding` |
 
+```mermaid
+flowchart LR
+    DEF["photoswipe / photoswipe/lightbox<br/>只有 default 导出"] --> OBJ["绑成外部对象<br/>用声明了返回类型的 js(…) 构造"]
+    OBJ --> LB["createPhotoSwipeLightbox(photoSwipeOptions { … })"]
+    LOADER["photoSwipeModuleLoader() → pswpModule"] --> LB
+    LB --> INIT["init()：此后才能打开"]
+```
+
 ## 本 wrapper 的约定
 
 - 上游两个模块都是**只有 default** 的导出，而 Kotlin/JS 会把 `@JsModule` + `@JsName` 声明编译成默认

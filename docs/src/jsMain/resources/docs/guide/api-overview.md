@@ -13,6 +13,14 @@ title: API overview
 | `…photoswipe.core` | `PhotoSwipeLightbox`, `PhotoSwipeCore`, `PhotoSwipeBase`, `PhotoSwipeOptions`, `photoSwipeOptions` |
 | `…photoswipe.core` | `SlideData`, `slideData`, `DataSource`, `ElementProvider`, `ActionType`, `ActionTypes`, `ActionFn`, `Point`, `Padding`, `Bounds`, `point`, `padding` |
 
+```mermaid
+flowchart LR
+    DEF["photoswipe / photoswipe/lightbox<br/>default-only exports"] --> OBJ["bound as external objects<br/>constructed through js(…) with a declared return type"]
+    OBJ --> LB["createPhotoSwipeLightbox(photoSwipeOptions { … })"]
+    LOADER["photoSwipeModuleLoader() → pswpModule"] --> LB
+    LB --> INIT["init(): only then can it open"]
+```
+
 ## Conventions this wrapper follows
 
 - Both upstream modules have a *default-only* export, and Kotlin/JS compiles an `@JsModule` + `@JsName`

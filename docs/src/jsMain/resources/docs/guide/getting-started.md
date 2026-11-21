@@ -46,6 +46,14 @@ lightbox.init()
 
 `photoSwipeModuleLoader()` returns a function resolving the already-imported core module, which is the form upstream documents for ES modules.
 
+```mermaid
+flowchart LR
+    A["thumbnail a tags carrying data-pswp-width / data-pswp-height"] --> DS["ElementProvider('#gallery') + DataSource(gallery, null)"]
+    DS --> OPT["photoSwipeOptions { … pswpModule = photoSwipeModuleLoader() }"]
+    OPT --> LB["createPhotoSwipeLightbox → init()"]
+    LB --> ON["on('change'): read lightbox.pswp?.currIndex"]
+```
+
 ## First call
 
 ```kotlin
