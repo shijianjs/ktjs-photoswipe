@@ -12,7 +12,6 @@ import io.github.shijianjs.ktjs.demo.page.SectionBlock
 import io.github.shijianjs.ktjs.demo.style.Palette
 import io.github.shijianjs.ktjs.dom.element.inlineStyle
 import io.github.shijianjs.ktjs.dom.element.invoke
-import io.github.shijianjs.ktjs.dom.webcomponent.CustomElementReferenceAdapter
 import io.github.shijianjs.ktjs.photoswipe.createPhotoSwipeLightbox
 import io.github.shijianjs.ktjs.photoswipe.core.DataSource
 import io.github.shijianjs.ktjs.photoswipe.core.ElementProvider
@@ -191,7 +190,7 @@ internal class GalleryPage : DemoPage() {
         renderStatus()
     }
 
-    companion object : CustomElementReferenceAdapter<GalleryPage>(GalleryPage::class.js, "photoswipe-gallery-page") {
+    companion object : GalleryPageDefaultReference() {
 
         private val galleryEnglish: GalleryTexts = GalleryTexts(
             title = "Gallery",
