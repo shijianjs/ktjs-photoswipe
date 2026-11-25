@@ -1,6 +1,7 @@
 package io.github.shijianjs.ktjs.photoswipe.core
 
 import js.objects.unsafeJso
+import js.reflect.Reflect
 import kotlin.js.JsAny
 import kotlin.js.unsafeCast
 import web.html.HTMLElement
@@ -181,9 +182,5 @@ fun slideData(build: SlideData.() -> Unit): SlideData = unsafeJso(build)
  * them back (for example `isVideo` or a custom key used by an `itemData` filter).
  */
 fun SlideData.extra(name: String, value: JsAny) {
-    putExtra(this, name, value)
+    Reflect.set(this, name, value)
 }
-
-/** Plain-object assignment for the index-signature half of `SlideData`. */
-private val putExtra: (SlideData, String, JsAny) -> Unit =
-    js("(target, name, value) => { target[name] = value }")
